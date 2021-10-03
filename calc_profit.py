@@ -13,7 +13,7 @@ def calc_profit(specified_profit,rakuten_item_list,amazon_item_list):
         rakuten_purchase_price = rakuten_item[2]
         rakuten_url = rakuten_item[3]
         amazon_price = amazon_item[2]
-        
+
         # アマゾンに無かった商品はスルー
         if amazon_price == 0:
             pass
@@ -22,7 +22,7 @@ def calc_profit(specified_profit,rakuten_item_list,amazon_item_list):
             # 利益計算
             profit = amazon_price - rakuten_purchase_price
             # 利益率計算
-            profit_rate = profit / amazon_price
+            profit_rate = profit / amazon_price * 100
             # 指定利益率以上のものだけを抽出
             if profit_rate > specified_profit:
                 record = pd.Series([jan, profit,profit_rate,rakuten_url,amazon_url], index=profit_df.columns)

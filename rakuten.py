@@ -62,6 +62,13 @@ def fetch_rakuten_item_price(spu,add_rate):
                 rakuten_item_list.append([jan,name,purchase_price,item_url])
     return rakuten_item_list
 
+def make_janlist_by_rakuten_data(rakuten_item_list):
+    jan_list = []
+    for rakuten_item in rakuten_item_list:
+        jan = rakuten_item[0]
+        jan_list.append[jan]
+    return jan_list
+
 
 if __name__ == "__main__":
     fetch_rakuten_item_price(3,2)

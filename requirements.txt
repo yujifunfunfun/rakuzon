@@ -3,3 +3,4 @@ pandas
 bs4
 python-amazon-sp-api
 python-dotenv
+eel
