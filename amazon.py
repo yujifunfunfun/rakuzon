@@ -15,7 +15,12 @@ def fetch_amazon_item_price(jan_list):
     amazon_item_list = []
     for jan in jan_list:
         jan = jan[0]
-        res = Catalog(Marketplaces.JP).list_items(jan=jan)
+        res = Catalog(Marketplaces.JP).list_items(JAN='4530107941624')
+        item_data = res.payload.get('Items')[0]
+        
+        asin = item_data
+
+
     print(res)
 
 if __name__ == "__main__":

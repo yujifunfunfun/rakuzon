@@ -1,14 +1,20 @@
-import csv
-import sys
-import codecs
-import math
-import random
 import requests
 from time import sleep
 import re
 import pandas as pd
 import requests
-from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+import os
+from os.path import join, dirname
+from logger import set_logger
+
+
+load_dotenv(verbose=True)
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
+logger = set_logger(__name__)
+
+rakuten_app_id = os.environ.get("RAKUTEN_APP_ID")
 
 
 
@@ -29,7 +35,7 @@ def fetch_rakuten_item_price(spu,add_rate):
     rakuten_item_list = []
     for jan in jan_list:
         jan = jan[0]
-        url = f'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?applicationId=1066714723520618130&keyword={jan}&sort=%2BitemPrice&pointRateFlag=1&pointRate&postageFlag=1'
+        url = f'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?applicationId={rakuten_app_id}&keyword={jan}&sort=%2BitemPrice&pointRateFlag=1&pointRate&postageFlag=1'
         r = requests.get(url)
         resp = r.json()
         if len(resp["Items"]) >= 1:
@@ -45,7 +51,7 @@ def fetch_rakuten_item_price(spu,add_rate):
             rakuten_item_list.append([jan,name,purchase_price,item_url])
         else:            
             sleep(1)
-            url = f'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?applicationId=1066714723520618130&keyword={jan}&sort=%2BitemPrice&postageFlag=1'
+            url = f'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?applicationId={rakuten_app_id}&keyword={jan}&sort=%2BitemPrice&postageFlag=1'
             r = requests.get(url)
             resp = r.json()
             if len(resp["Items"]) >= 1:
