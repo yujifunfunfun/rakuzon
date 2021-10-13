@@ -21,7 +21,6 @@ def fetch_amazon_item_price(jan):
     # JAN検索でamzonに商品がない場合
     if item_count == 0:
         amazon_item_data.append([0,'None','None','None','None'])
-        print('A')
     # JAN検索でamzonに商品が1つの場合
     elif item_count == 1:
         # 商品情報を1つでも取れなければスルー
@@ -36,7 +35,6 @@ def fetch_amazon_item_price(jan):
             amazon_item_data.append([price,buybox_price,1,item_url,category_list])
         except Exception as e:
             amazon_item_data.append([0,'None','None','None','None'])
-            print('B')
     else:
         # JANの検索結果が１つ以上
         asin_list = []
@@ -49,7 +47,6 @@ def fetch_amazon_item_price(jan):
                 pass
         # 一個あたりの価格を取得
         for count ,asin in zip(range(len(asin_list)),asin_list):
-            time.sleep(1)
             if count == 0:
                 try:
                     item_url = f'https://www.amazon.co.jp/gp/product/{asin}'
@@ -68,6 +65,7 @@ def fetch_amazon_item_price(jan):
                     category_list = 'None'
             else:
                 try:
+                    time.sleep(1)
                     buybox_price2 = Products(Marketplaces.JP).get_competitive_pricing_for_asins(asin_list=asin_list,ItemCondition='New').payload[count].get('Product').get('CompetitivePricing').get('CompetitivePrices')[0].get('Price').get('ListingPrice').get('Amount')
                     package_quantity2 = Catalog(Marketplaces.JP).get_item(asin=asin).payload.get('AttributeSets')[0].get('PackageQuantity')
                     fba_fee = cal_fba_fee(asin,buybox_price2)

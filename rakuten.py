@@ -62,7 +62,6 @@ def fetch_rakuten_item_price(spu,add_rate,jan):
                     item_url = item['itemUrl']
     else:
         purchase_price = 999999
-        print(jan+'rakuten1')
     url2 = f'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?applicationId={rakuten_app_id2}&keyword={jan}&sort=%2BitemPrice&postageFlag=1'
     r2= requests.get(url2)
     resp2 = r2.json()
@@ -74,9 +73,11 @@ def fetch_rakuten_item_price(spu,add_rate,jan):
         point_rate2 = spu + add_rate
         # 仕入れ値計算
         purchase_price2= calc_purchase_price(price2,point_rate2)
+        half_price = purchase_price / 2
+        if purchase_price != 999999 and purchase_price2 < half_price:
+            purchase_price2 = 999999
     else:
         purchase_price2 = 999999
-        print(jan+'rakuten2')
     
     if len(resp["Items"]) == len(resp2["Items"]) == 0:
         rakuten_item_data.append(['None','None',0,'None'])
