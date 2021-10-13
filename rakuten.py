@@ -8,14 +8,12 @@ import os
 from os.path import join, dirname
 from logger import set_logger
 
-
 load_dotenv(verbose=True)
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 logger = set_logger(__name__)
-
 rakuten_app_id = os.environ.get("RAKUTEN_APP_ID")
-
+rakuten_app_id2 = os.environ.get("RAKUTEN_APP_ID2")
 
 
 def calc_purchase_price(price,point_rate):
@@ -30,51 +28,65 @@ def calc_purchase_price(price,point_rate):
     return purchase_price
 
 
-def fetch_rakuten_item_price(spu,add_rate):
-    jan_list = pd.read_csv('jan.csv',header=None).values.tolist()
-    rakuten_item_list = []
-    for jan in jan_list:
-        jan = jan[0]
-        url = f'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?applicationId={rakuten_app_id}&keyword={jan}&sort=%2BitemPrice&pointRateFlag=1&pointRate&postageFlag=1'
-        r = requests.get(url)
-        resp = r.json()
-        if len(resp["Items"]) >= 1:
-            sleep(1)
-            item = resp['Items'][0]['Item']
-            name = item['itemName']
-            price = item['itemPrice']
-            item_url = item['itemUrl']
-            point_rate = item['pointRate']
-            point_rate = spu + (point_rate-1) + add_rate
-            # 仕入れ値計算
-            purchase_price = calc_purchase_price(price,point_rate)
-            rakuten_item_list.append([jan,name,purchase_price,item_url])
-        else:            
-            sleep(1)
-            url = f'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?applicationId={rakuten_app_id}&keyword={jan}&sort=%2BitemPrice&postageFlag=1'
-            r = requests.get(url)
-            resp = r.json()
-            if len(resp["Items"]) >= 1:
-                sleep(1)
-                r = requests.get(url)
-                resp = r.json()
-                item = resp['Items'][0]['Item']
+def fetch_rakuten_item_price(spu,add_rate,jan):
+    spu = int(spu)
+    add_rate = int(add_rate)
+    rakuten_item_data = []
+    url = f'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?applicationId={rakuten_app_id}&keyword={jan}&sort=%2BitemPrice&pointRateFlag=1&pointRate&postageFlag=1'
+    r = requests.get(url)
+    resp = r.json()
+    item_counts = len(resp["Items"])
+    # 商品がヒットすれば続行
+    if item_counts >= 1:
+        # 検索結果からポイント率を加味し一番安い商品を取得
+        for count in range(item_counts):
+            if count == 0:
+                item = resp['Items'][count]['Item']
                 name = item['itemName']
                 price = item['itemPrice']
-                item_url = item['itemUrl']     
-                point_rate = spu + add_rate
+                item_url = item['itemUrl']
+                point_rate = item['pointRate']
+                point_rate = spu + (point_rate-1) + add_rate
                 # 仕入れ値計算
                 purchase_price = calc_purchase_price(price,point_rate)
-                rakuten_item_list.append([jan,name,purchase_price,item_url])
-    return rakuten_item_list
+            else:
+                item = resp['Items'][count]['Item']
+                price_2 = item['itemPrice']
+                point_rate_2 = item['pointRate']
+                point_rate_2 = spu + (point_rate_2-1) + add_rate
+                # 仕入れ値計算
+                purchase_price_2 = calc_purchase_price(price_2,point_rate_2) 
+                if purchase_price > purchase_price_2:
+                    purchase_price = purchase_price_2
+                    name = item['itemName']
+                    item_url = item['itemUrl']
+    else:
+        purchase_price = 999999
+        print(jan+'rakuten1')
+    url2 = f'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?applicationId={rakuten_app_id2}&keyword={jan}&sort=%2BitemPrice&postageFlag=1'
+    r2= requests.get(url2)
+    resp2 = r2.json()
+    if len(resp2["Items"]) >= 1:
+        item2 = resp2['Items'][0]['Item']
+        name2 = item2['itemName']
+        price2 = item2['itemPrice']
+        item_url2 = item2['itemUrl']     
+        point_rate2 = spu + add_rate
+        # 仕入れ値計算
+        purchase_price2= calc_purchase_price(price2,point_rate2)
+    else:
+        purchase_price2 = 999999
+        print(jan+'rakuten2')
+    
+    if len(resp["Items"]) == len(resp2["Items"]) == 0:
+        rakuten_item_data.append(['None','None',0,'None'])
+    elif purchase_price <= purchase_price2:
+        rakuten_item_data.append([jan,name,purchase_price,item_url])
+    else:
+        rakuten_item_data.append([jan,name2,purchase_price2,item_url2])
+    return rakuten_item_data[0]
 
-def make_janlist_by_rakuten_data(rakuten_item_list):
-    jan_list = []
-    for rakuten_item in rakuten_item_list:
-        jan = rakuten_item[0]
-        jan_list.append[jan]
-    return jan_list
 
-
+    
 if __name__ == "__main__":
     fetch_rakuten_item_price(3,2)

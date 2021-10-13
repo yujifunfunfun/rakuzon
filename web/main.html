@@ -8,33 +8,34 @@
     <title>ラクゾン</title>
 </head>
 <body class="px-3 pt-3">
+    <style>
+    .spu p{
+        display:inline-block;
+    }
+    
+    </style>
     <h2 class="mb-3">ラクゾン</h2>
-    <div class="mb-4">
-        <p class="mb-0">SPU倍率</p>
-        <input type="number" id="spu" class="mb-3" style="width:40px;" value=3 min="0"></input>倍
-        <br>
-        <p class="mb-0">追加倍率</p>
-        <input type="number" id="add_rate" class="mb-3" style="width:40px;" value=0 min="1"></input>倍
-        <br>
-        <p class="mb-0">利益率の指定</p>
-        <input type="number" id="specified_profit" class="mb-3" style="width:40px;" value=0 min="1"></input>%以上
-        <br>
-        <p class="mb-0">カテゴリー指定</p>
-        <input type="text" id="category" class="mb-3" value=""></input>
-        <br>
-        <button id="search" class="bg-primary text-white border-primary rounded-pill">実行</button>
+    <div class="mb-5 spu"> 
+        <p class="mb-0">SPU倍率:</p>
+        <input type="number" id="spu" class="mb-3" style="width:45px;" value=3 min="0"></input>倍
+        <p class="mb-0 ml-3">追加倍率:</p>
+        <input type="number" id="add_rate" class="mb-3" style="width:45px;" value=0 min="1"></input>倍
+        <p class="mb-0 ml-3">利益率の指定:</p>
+        <input type="number" id="specified_profit" class="mb-3" style="width:45px;" value=0 min="1"></input>%以上
+    <br>
+    <button id="search" class="bg-primary text-white border-primary rounded-pill">実行</button>
     </div>
-
+    <div>
+        <p class="mb-0">処理の進行状況確認欄</p>
+        <textarea id="result" cols="30" rows="20"></textarea>
+      </div>
     <script type="text/javascript" src="./eel.js"></script>
     <script>
+
         search.addEventListener('click', () => {
-            if(date.value == ''){
-                alert('日付を入力してください')
-            }
-            else{
-                eel.calc_profit(spu.value,add_rate.value,specified_profit.value,category.value)
-            }
+            eel.calc_profit(spu.value,add_rate.value,specified_profit.value)
         })
+
         eel.expose(view_log_js)
         function view_log_js(text){
             result.value += text + '\n'
