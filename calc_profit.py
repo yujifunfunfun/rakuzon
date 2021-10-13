@@ -5,11 +5,11 @@ import eel
 from logger import *
 import time
 logger = set_logger(__name__)
-
+import numpy as np
 
 def calc_profit(specified_profit,rakuten_item_list,amazon_item_list):
     specified_profit = int(specified_profit)
-    cols = ['jan','rakuten_purchase_price','amazon_price','buybox_price','package_quantity','profit','profit_rate','rakuten_url','amazon_url','category_list']
+    cols = ['JAN','楽天価格-ポイント','Amazon価格-FBA手数料','カート価格','パッケージ個数','利益','利益率','楽天URL','AmazonURL','カテゴリー']
     profit_df = pd.DataFrame(index=[], columns=cols)
     for rakuten_item,amazon_item in zip(rakuten_item_list,amazon_item_list):
         jan = rakuten_item[0]
@@ -33,6 +33,7 @@ def calc_profit(specified_profit,rakuten_item_list,amazon_item_list):
                 profit_rate = round(profit_rate,2)
                 record = pd.Series([jan,rakuten_purchase_price,amazon_price,buybox_price,package_quantity,profit,profit_rate,rakuten_url,amazon_url,category_list], index=profit_df.columns)
                 profit_df = profit_df.append(record, ignore_index=True)
+    profit_df.index = np.arange(1,len(profit_df)+1)
     profit_df.to_csv("profit.csv")
 
 def make_janlist_by_rakuten_data(rakuten_item_list):
@@ -63,7 +64,6 @@ def main(spu,add_rate,specified_profit):
     rakuten_item_list = []
     amazon_item_list = []
     for jan in jan_list:
-        eel.view_log_js(f'{jan[0]}')
         try:
             jan = jan[0]
             rakuten_item_data = fetch_rakuten_item_price(spu,add_rate,jan)
