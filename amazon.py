@@ -80,6 +80,7 @@ def fetch_amazon_item_price(jan):
                 except Exception as e:
                     pass
         amazon_item_data.append([price_ea,buybox_price,package_quantity,item_url,category_list])
+
     return amazon_item_data[0]
         
 def cal_fba_fee(asin,price):

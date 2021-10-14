@@ -9,7 +9,7 @@ import numpy as np
 
 def calc_profit(specified_profit,rakuten_item_list,amazon_item_list):
     specified_profit = int(specified_profit)
-    cols = ['JAN','楽天価格-ポイント','Amazon価格-FBA手数料','カート価格','パッケージ個数','利益','利益率','楽天URL','AmazonURL','カテゴリー']
+    cols = ['JAN','楽天価格-ポイント','Amazonカート価格-FBA手数料','Amazonカート価格','Amazonパッケージ数','利益','利益率','楽天URL','AmazonURL','カテゴリー']
     profit_df = pd.DataFrame(index=[], columns=cols)
     for rakuten_item,amazon_item in zip(rakuten_item_list,amazon_item_list):
         jan = rakuten_item[0]
@@ -29,7 +29,7 @@ def calc_profit(specified_profit,rakuten_item_list,amazon_item_list):
             # 利益率計算
             profit_rate = profit / amazon_price * 100
             # 指定利益率以上のものだけを抽出
-            if profit_rate > specified_profit:
+            if profit_rate > specified_profit and profit_rate < 50:
                 profit_rate = round(profit_rate,2)
                 record = pd.Series([jan,rakuten_purchase_price,amazon_price,buybox_price,package_quantity,profit,profit_rate,rakuten_url,amazon_url,category_list], index=profit_df.columns)
                 profit_df = profit_df.append(record, ignore_index=True)

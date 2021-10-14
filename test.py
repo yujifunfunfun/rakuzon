@@ -17,7 +17,7 @@ import requests
 # jan_list = pd.read_csv('jan.csv',header=None).values.tolist()
 # amazon_item_list = []
 
-res = Catalog(Marketplaces.JP).list_items(JAN='4962752003301')
+res = Catalog(Marketplaces.JP).list_items(JAN='6973271603802')
 
 # item = res.payload.get('Items')[0].get('AttributeSets')[0].get('ListPrice').get('Amount')
 # asin = res.payload.get('Items')[0].get('Identifiers').get('MarketplaceASIN').get('ASIN')
