@@ -11,13 +11,14 @@ from sp_api.api import CatalogItems
 from sp_api.base.marketplaces import Marketplaces
 import pandas as pd
 import requests
+import csv
 
 
 
 # jan_list = pd.read_csv('jan.csv',header=None).values.tolist()
 # amazon_item_list = []
 
-res = Catalog(Marketplaces.JP).list_items(JAN='6973271603802')
+# res = Catalog(Marketplaces.JP).list_items(JAN='6973271603802')
 
 # item = res.payload.get('Items')[0].get('AttributeSets')[0].get('ListPrice').get('Amount')
 # asin = res.payload.get('Items')[0].get('Identifiers').get('MarketplaceASIN').get('ASIN')
@@ -35,7 +36,15 @@ res = Catalog(Marketplaces.JP).list_items(JAN='6973271603802')
 # res = CatalogItems(Marketplaces.JP).search_catalog_items(keywords='デジタル優品屋',pageSize=20)
 
 
-print(res)
+
+with open('jan.csv') as f:
+    reader = csv.reader(f)
+    header = next(reader)
+    l = [row for row in reader]
+
+
+
+print(l)
 
 
 

@@ -2,3 +2,5 @@ venv
 .env
 logs
 Kitchen_Recommended_Item_List (4).xlsx
+dist
+logs

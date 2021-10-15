@@ -6,6 +6,7 @@ from logger import *
 import time
 logger = set_logger(__name__)
 import numpy as np
+import csv
 
 def calc_profit(specified_profit,rakuten_item_list,amazon_item_list):
     specified_profit = int(specified_profit)
@@ -34,7 +35,7 @@ def calc_profit(specified_profit,rakuten_item_list,amazon_item_list):
                 record = pd.Series([jan,rakuten_purchase_price,amazon_price,buybox_price,package_quantity,profit,profit_rate,rakuten_url,amazon_url,category_list], index=profit_df.columns)
                 profit_df = profit_df.append(record, ignore_index=True)
     profit_df.index = np.arange(1,len(profit_df)+1)
-    profit_df.to_csv("profit.csv")
+    profit_df.to_csv("profit.csv",encoding="shift-jis")
 
 def make_janlist_by_rakuten_data(rakuten_item_list):
     jan_list = []
@@ -43,13 +44,35 @@ def make_janlist_by_rakuten_data(rakuten_item_list):
         jan_list.append(jan)
     return jan_list
     
-def main2(spu,add_rate,specified_profit):
+
+
+
+def load_csv():
+    with open('jan.csv') as f:
+        reader = csv.reader(f)
+        header = next(reader)
+        l = [row for row in reader]
+    return l
+
+
+
+def main(spu,add_rate,specified_profit,jan_list):
     try:
-        jan_list = pd.read_csv('jan.csv',header=None,dtype=object).values.tolist()
-        rakuten_item_list = fetch_rakuten_item_price(spu,add_rate)
-        jan_list = make_janlist_by_rakuten_data(rakuten_item_list)
-        print(jan_list)
-        amazon_item_list = fetch_amazon_item_price(jan_list)
+        eel.view_log_js('商品情報取得中…')
+        # jan_list = load_csv()
+        jan_list = jan_list.split()
+        rakuten_item_list = []
+        amazon_item_list = []
+        for jan in jan_list:
+            try:
+                rakuten_item_data = fetch_rakuten_item_price(spu,add_rate,jan)
+                if rakuten_item_data[2] == 0:
+                    time.sleep(1)
+                else:
+                    rakuten_item_list.append(rakuten_item_data)
+                    amazon_item_list.append(fetch_amazon_item_price(jan)) 
+            except Exception as e:
+                pass
         calc_profit(specified_profit,rakuten_item_list,amazon_item_list)
         logger.info("完了")
         eel.view_log_js('完了')
@@ -57,27 +80,7 @@ def main2(spu,add_rate,specified_profit):
         logger.info(e)
         eel.view_log_js('エラー発生 処理を中断します')
 
-
-def main(spu,add_rate,specified_profit):
-    eel.view_log_js('商品情報取得中…')
-    jan_list = pd.read_csv('jan.csv',header=None,dtype=object).values.tolist()
-    rakuten_item_list = []
-    amazon_item_list = []
-    for jan in jan_list:
-        try:
-            jan = jan[0]
-            rakuten_item_data = fetch_rakuten_item_price(spu,add_rate,jan)
-            if rakuten_item_data[2] == 0:
-                time.sleep(1)
-            else:
-                rakuten_item_list.append(rakuten_item_data)
-                amazon_item_list.append(fetch_amazon_item_price(jan)) 
-        except Exception as e:
-            pass
-    calc_profit(specified_profit,rakuten_item_list,amazon_item_list)
-    logger.info("完了")
-    eel.view_log_js('完了')
-    
+        
 
 
 if __name__ == "__main__":

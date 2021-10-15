@@ -12,6 +12,9 @@
     .spu p{
         display:inline-block;
     }
+    .textarea div{
+        display:inline-block;
+    }
     
     </style>
     <h3 class="mb-3">ラクゾン</h3>
@@ -25,15 +28,21 @@
     <br>
     <button id="search" class="bg-primary text-white border-primary rounded-pill">実行</button>
     </div>
-    <div>
-        <p class="mb-0">処理状況確認欄</p>
-        <textarea id="result" cols="0" rows="10"></textarea>
-      </div>
+    <div class='textarea'>
+        <div>
+            <p class="mb-0">JAN入力欄</p>
+            <textarea id="jan_list" cols="0" rows="10"></textarea>
+        </div>
+        <div class='ml-5'>
+            <p class="mb-0">処理状況確認欄</p>
+            <textarea id="result" cols="0" rows="10"></textarea>
+        </div>
+    </div>
     <script type="text/javascript" src="./eel.js"></script>
     <script>
 
         search.addEventListener('click', () => {
-            eel.calc_profit(spu.value,add_rate.value,specified_profit.value)
+            eel.calc_profit(spu.value,add_rate.value,specified_profit.value,jan_list.value)
         })
 
         eel.expose(view_log_js)
