@@ -10,7 +10,7 @@ import csv
 
 def calc_profit(specified_profit,rakuten_item_list,amazon_item_list):
     specified_profit = int(specified_profit)
-    cols = ['JAN','楽天価格-ポイント','クーポン適用価格','Amazonカート価格-FBA手数料','Amazonカート価格','Amazonパッケージ数','出品者数','利益','利益(クーポン使用)','利益率','利益率(クーポン使用)','楽天URL','AmazonURL','カテゴリー']
+    cols = ['JAN','楽天価格-ポイント','クーポン使用価格','Amazonカート価格-FBA手数料','Amazonカート価格','Amazonパッケージ数','出品者数','利益','利益(クーポン使用)','利益率','利益率(クーポン使用)','楽天URL','AmazonURL','カテゴリー']
     profit_df = pd.DataFrame(index=[], columns=cols)
     for rakuten_item,amazon_item in zip(rakuten_item_list,amazon_item_list):
         jan = rakuten_item[0]
@@ -33,6 +33,7 @@ def calc_profit(specified_profit,rakuten_item_list,amazon_item_list):
             # 利益率計算
             profit_rate = profit / amazon_price * 100
             profit_rate_coupon = profit_coupon / amazon_price * 100
+            profit_rate_coupon = round(profit_rate_coupon,2)
             # 指定利益率以上のものだけを抽出
             if profit_rate > specified_profit and profit_rate < 50:
                 profit_rate = round(profit_rate,2)
@@ -50,7 +51,7 @@ def load_csv():
 def main(spu,add_rate,coupon,specified_profit,amazon_min_price,amazon_max_price,min_offer_count,filter):
     try:
         eel.view_log_js('商品情報取得中…')
-        if 'category' and 'package' in filter:
+        if 'category' in filter and 'package' in filter:
             asin_jan_list = load_csv()
             rakuten_item_list = []
             amazon_item_list = []

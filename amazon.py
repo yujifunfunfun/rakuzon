@@ -64,7 +64,6 @@ def fetch_amazon_item_price_pa(asin,amazon_min_price,amazon_max_price,min_offer_
         amazon_min_price = int(amazon_min_price)
         amazon_max_price = int(amazon_max_price)
         min_offer_count = int(min_offer_count)
-
         item_data = Products(Marketplaces.JP).get_item_offers(asin=asin,ItemCondition='New')
         buybox_price = item_data.payload.get('Summary').get('BuyBoxPrices')[0].get('ListingPrice').get('Amount') 
         offer_count = item_data.payload.get('Summary').get('TotalOfferCount')
