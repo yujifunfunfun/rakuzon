@@ -6,19 +6,20 @@ from logger import set_logger
 logger = set_logger(__name__)
 from sp_api.api import Catalog
 from sp_api.api import ProductFees
+from sp_api.api import Products
 from sp_api.api import CatalogItems
 
 from sp_api.base.marketplaces import Marketplaces
 import pandas as pd
 import requests
 import csv
-
+import time
 
 
 # jan_list = pd.read_csv('jan.csv',header=None).values.tolist()
 # amazon_item_list = []
 
-# res = Catalog(Marketplaces.JP).list_items(JAN='6973271603802')
+# res = Catalog(Marketplaces.JP).list_items(Query='B07NT91RDH')
 
 # item = res.payload.get('Items')[0].get('AttributeSets')[0].get('ListPrice').get('Amount')
 # asin = res.payload.get('Items')[0].get('Identifiers').get('MarketplaceASIN').get('ASIN')
@@ -37,15 +38,10 @@ import csv
 
 
 
-with open('jan.csv') as f:
-    reader = csv.reader(f)
-    header = next(reader)
-    l = [row for row in reader]
+# category_list =  pd.read_csv("csv/amazon/amazon_category_item_list.csv").values.tolist()
 
+filter = ['category','package']
 
-
-print(l)
-
-
-
+if 'category' and 'package' in filter:
+    print('yes')
 

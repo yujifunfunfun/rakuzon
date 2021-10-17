@@ -5,44 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <title>ラクゾン</title>
+    <title>AMA PROFIT</title>
 </head>
 <body class="px-3 pt-3">
     <style>
     .spu p{
         display:inline-block;
-    }
-    .textarea div{
-        display:inline-block;
-    }
-    
+    }    
     </style>
-    <h3 class="mb-3">ラクゾン</h3>
-    <div class="mb-5 spu"> 
-        <p class="mb-0">SPU倍率:</p>
-        <input type="number" id="spu" class="mb-3" style="width:45px;" value=0 min="0"></input>倍
-        <p class="mb-0 ml-3">追加倍率:</p>
-        <input type="number" id="add_rate" class="mb-3" style="width:45px;" value=0 min="1"></input>倍
-        <p class="mb-0 ml-3">利益率の指定:</p>
-        <input type="number" id="specified_profit" class="mb-3" style="width:45px;" value=0 min="1"></input>%以上
-    <br>
-    <button id="search" class="bg-primary text-white border-primary rounded-pill">実行</button>
-    </div>
-    <div class='textarea'>
-        <div>
-            <p class="mb-0">JAN入力欄</p>
-            <textarea id="jan_list" cols="0" rows="10"></textarea>
+    <h3 class="mb-3">AMA PROFIT</h3>
+    <div>
+        <div class="spu"> 
+            <p class="mb-0">SPU倍率:</p>
+            <input type="number" id="spu" class="mb-3" style="width:45px;" value=0 min="0"></input>倍
+            <p class="mb-0 ml-3">追加倍率:</p>
+            <input type="number" id="add_rate" class="mb-3" style="width:45px;" value=0 min="0"></input>倍
+            <p class="mb-0 ml-3">クーポン金額:</p>
+            <input type="number" id="coupon" class="mb-3" style="width:60px;" value=0 min="0"></input>円
+        </div> 
+        <div class='spu'>
+            <p class="mb-0">利益率の指定:</p>
+            <input type="number" id="specified_profit" class="mb-3" style="width:45px;" value=0 min="0"></input>%以上
+            <p class="mb-0 ml-3">出品者の人数:</p>
+            <input type="number" id="min_offer_count" class="mb-3" style="width:45px;" value=0 min="0"></input>人以上
         </div>
-        <div class='ml-5'>
-            <p class="mb-0">処理状況確認欄</p>
-            <textarea id="result" cols="0" rows="10"></textarea>
+        <div class='spu'>
+            <p class="mb-0">AMAZON価格帯:</p>
+            <input type="number" id="amazon_min_price" class="mb-3" style="width:100px;" value=0 min="0"></input>円以上
+            <input type="number" id="amazon_max_price" class="mb-3" style="width:100px;" value=0 min="0"></input>円未満
         </div>
+        <div class="mb-3">
+            <form name="form1">
+                <input class ="mr-1" type="checkbox" name="filter" value="category" id="checkbox1" /><label for="checkbox1">カテゴリー</label>
+                <input class ="mr-1 ml-2"  type="checkbox" name="filter" value="package" id="checkbox2" /><label for="checkbox2">パッケージ</label>
+            </form>
+        </div>
+        <button id="search" class="bg-primary text-white border-primary rounded-pill">実行</button>
     </div>
+    <div class='mt-3'>
+        <p class="mb-0">処理状況確認欄</p>
+        <textarea id="result" cols="0" rows="10"></textarea>
+    </div>
+
     <script type="text/javascript" src="./eel.js"></script>
     <script>
-
         search.addEventListener('click', () => {
-            eel.calc_profit(spu.value,add_rate.value,specified_profit.value,jan_list.value)
+            const arr1 = [];
+            const filter = document.form1.filter;
+
+            for (let i = 0; i < filter.length; i++) {
+                if (filter[i].checked) { 
+                    arr1.push(filter[i].value);
+                }
+            }
+            eel.calc_profit(spu.value,add_rate.value,coupon.value,specified_profit.value,amazon_min_price.value,amazon_max_price.value,min_offer_count.value,arr1)
         })
 
         eel.expose(view_log_js)
